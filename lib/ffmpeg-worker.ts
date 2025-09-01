@@ -158,7 +158,11 @@ export const convertToMP4 = async (
     });
 
     const data = await ffmpegInstance.readFile('output.mp4');
-    const blob = new Blob([data], { type: 'video/mp4' });
+    // FileDataを安全にBlobPartに変換
+    const buffer = new ArrayBuffer((data as Uint8Array).length);
+    const view = new Uint8Array(buffer);
+    view.set(data as Uint8Array);
+    const blob = new Blob([buffer], { type: 'video/mp4' });
 
     // クリーンアップ
     await ffmpegInstance.deleteFile('input.mp3');
